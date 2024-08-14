@@ -69,9 +69,8 @@ class TransformerEncoderLayer(Module):
         # Normalize the masks
         N = x.shape[0]
         L = x.shape[1]
-        attn_mask = attn_mask or FullMask(L, device=x.device)
-        length_mask = length_mask or \
-            LengthMask(x.new_full((N,), L, dtype=torch.int64))
+        attn_mask = attn_mask
+        length_mask = length_mask
 
         # Run self attention and add it to the input
         x = x + self.dropout(self.attention(
@@ -126,6 +125,7 @@ class TransformerEncoder(Module):
                          fast_transformers.masking.BaseMask that encodes how
                          many elements each sequence in the batch consists of.
         """
+        x = x.permute(1, 0, 2)
         # Normalize the masks
         N = x.shape[0]
         L = x.shape[1]
@@ -142,6 +142,7 @@ class TransformerEncoder(Module):
         if self.norm is not None:
             x = self.norm(x)
 
+        x = x.permute(1, 0, 2)
         return x
 
 

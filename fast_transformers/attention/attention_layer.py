@@ -88,6 +88,7 @@ class AttentionLayer(Module):
         -------
             The new value for each query as a tensor of shape (N, L, D).
         """
+        
         # Extract the dimensions into local variables
         N, L, _ = queries.shape
         _, S, _ = keys.shape
@@ -97,6 +98,7 @@ class AttentionLayer(Module):
         queries = self.query_projection(queries).view(N, L, H, -1)
         keys = self.key_projection(keys).view(N, S, H, -1)
         values = self.value_projection(values).view(N, S, H, -1)
+
 
         # Let the world know of the qkv
         self.event_dispatcher.dispatch(QKVEvent(self, queries, keys, values))
@@ -110,6 +112,7 @@ class AttentionLayer(Module):
             query_lengths,
             key_lengths
         ).view(N, L, -1)
+        
 
         # Project the output and return
         return self.out_projection(new_values)
